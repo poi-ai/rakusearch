@@ -1,24 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import ProductCard from './components/ProductCard';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1>ECサイトの検索結果</h1>
+      <div className="row">
+        <div className="col-md-4">
+          <ProductCard
+            title="商品1"
+            price={1000}
+            description="この商品は素晴らしい商品です。"
+          />
+        </div>
+        <div className="col-md-4">
+          <ProductCard
+            title="商品2"
+            price={1500}
+            description="別の素晴らしい商品です。"
+          />
+        </div>
+        {/* 他の商品カードも同様に追加 */}
+      </div>
     </div>
   );
 }
