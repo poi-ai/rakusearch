@@ -1,22 +1,22 @@
 import config
 import csv
+import genre
 import json
 import os
 import requests
-
+import time
 
 def main():
-    genre_id_list = ['551167']
-
     # ジャンルIDごとに更新商品を取得
-    for genre_id in genre_id_list:
-        r = requests.get(f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId={config.APPLICATION_ID}&genreId={genre_id}')
+    for genre_id in genre.genre_list:
+        time.sleep(2)
+        r = requests.get(f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId={config.APPLICATION_ID}&genreId={next(iter(genre_id))}')
         item_list = json.loads(r.content)['Items']
         # 商品ごとに処理
         for item in item_list:
             item = item['Item']
 
-            with open('rakuten_item.csv', 'a', newline='', encoding='shift-jis') as file:
+            with open('rakuten_item.csv', 'a', newline='', encoding='shift-jis', errors='ignore') as file:
                 writer = csv.writer(file)
 
                 # 商品データをCSVに書き込む
