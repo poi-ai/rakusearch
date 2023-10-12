@@ -8,9 +8,10 @@ import time
 
 def main():
     # ジャンルIDごとに更新商品を取得
-    for genre_id in genre.genre_list:
+    for genre_dict in genre.genre_list:
         time.sleep(2)
-        r = requests.get(f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId={config.APPLICATION_ID}&genreId={next(iter(genre_id))}')
+        genre_id = next(iter(genre_dict))
+        r = requests.get(f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId={config.APPLICATION_ID}&genreId={genre_id}')
         item_list = json.loads(r.content)['Items']
         # 商品ごとに処理
         for item in item_list:
@@ -115,6 +116,9 @@ def file_exist_check():
     # CSVファイルが存在するか確認
     file_exists = os.path.exists(csv_file)
 
+    if file_exists:
+        return
+
     # ヘッダー行
     header = [
         '商品名',
@@ -144,8 +148,7 @@ def file_exist_check():
         writer = csv.writer(file)
 
         # ファイルが存在しない場合、ヘッダー行を書き込む
-        if not file_exists:
-            writer.writerow(header)
+        writer.writerow(header)
 
 file_exist_check()
 main()
