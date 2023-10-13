@@ -1,154 +1,113 @@
 import config
-import csv
 import genre
 import json
-import os
+import pymysql
 import requests
 import time
 
-def main():
-    # ジャンルIDごとに更新商品を取得
-    for genre_dict in genre.genre_list:
-        time.sleep(2)
-        genre_id = next(iter(genre_dict))
-        r = requests.get(f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId={config.APPLICATION_ID}&genreId={genre_id}')
-        item_list = json.loads(r.content)['Items']
-        # 商品ごとに処理
-        for item in item_list:
-            item = item['Item']
+class Main():
+    def __init__(self):
+        self.itemdb = ItemsTableHandler()
 
-            with open('rakuten_item.csv', 'a', newline='', encoding='shift-jis', errors='ignore') as file:
-                writer = csv.writer(file)
+    def main():
+        # ジャンルIDごとに更新商品を取得
+        for genre_dict in genre.genre_list:
+            # ジャンルID取得
+            genre_id = next(iter(genre_dict))
 
-                # 商品データをCSVに書き込む
-                for item in item_list:
-                    item = item['Item']
+            # 楽天市場APIから指定したジャンルの最新更新商品を取得
+            time.sleep(2)
+            r = requests.get(f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId={config.APPLICATION_ID}&genreId={genre_id}')
 
-                    row = [
-                        item['itemName'],
-                        item['itemCode'],
-                        item['itemUrl'],
-                        item['itemPriceMax1'],
-                        item['itemPriceMin1'],
-                        item['imageFlag'],
-                    ]
+            # dict変換
+            item_list = json.loads(r.content)['Items']
 
-                    if item['imageFlag'] == 1:
-                        row.append(item['mediumImageUrls'][0]['imageUrl'])
-                    else:
-                        row.append('')
+            # 1商品ごとに処理
+            for item in item_list:
+                item = item['Item']
 
-                    row.extend([
-                        item['taxFlag'],
-                        item['postageFlag'],
-                        item['creditCardFlag'],
-                        item['startTime'],
-                        item['endTime'],
-                        item['reviewCount'],
-                        item['reviewAverage'],
-                        item['pointRate'],
-                        item['pointRateStartTime'],
-                        item['pointRateEndTime'],
-                        item['shopName'],
-                        item['shopCode'],
-                        item['shopUrl'],
-                        item['shopAffiliateUrl']
-                    ])
+                # TODO
 
-                    writer.writerow(row)
+class ItemsTableHandler:
+    def __init__(self):
+        self.db_config = {
+            'host': config.HOST_NAME,
+            'user': config.USER_NAME,
+            'password': config.PASSWORD,
+            'db': config.DB_NAME,
+        }
+        self.connection = None
 
-            # ポイント10倍のみ抽出
-            if item['pointRate'] <= 10:
-                continue
+    def connect(self):
+        self.connection = pymysql.connect(**self.db_config)
 
-            print('-----------------------')
-            # 商品名
-            print(item['itemName'])
-            # 商品コード
-            print(item['itemCode'])
-            # 商品URL(affId設定時はaffUrl)
-            print(item['itemUrl'])
-            # 商品価格最大
-            print(item['itemPriceMax1'])
-            # 商品価格最低
-            print(item['itemPriceMin1'])
-            # アフィリエイトURL (GETパラメータにaffId指定必須)
-            # print(item['affiliateUrl'])
-            # 商品画像フラグ
-            print(item['imageFlag'])
-            if item['imageFlag'] == 1:
-                # 商品画像(1枚目 128x128)
-                print(item['mediumImageUrls'][0]['imageUrl'])
-            # 税込みフラグ 0: 税込、1: 税別
-            print(item['taxFlag'])
-            # 送料フラグ 0: 送料込、1: 送料別
-            print(item['postageFlag'])
-            # クレカ利用可フラグ 0: 不可、1: 可
-            print(item['creditCardFlag'])
-            # タイムセール開始時刻
-            print(item['startTime'])
-            # タイムセール終了時刻
-            print(item['endTime'])
-            # レビュー件数
-            print(item['reviewCount'])
-            # レビュー平均
-            print(item['reviewAverage'])
-            # 商品別ポイント倍率
-            print(item['pointRate'])
-            # 商品別ポイント倍率変更開始日時
-            print(item['pointRateStartTime'])
-            # 商品別ポイント倍率変更終了日時
-            print(item['pointRateEndTime'])
-            # 店舗名
-            print(item['shopName'])
-            # 店舗コード
-            print(item['shopCode'])
-            # 店舗URL (affId指定時はaffURL)
-            print(item['shopUrl'])
-            # アフィリエイト店舗URL
-            print(item['shopAffiliateUrl'])
-            print('-----------------------')
+    def entity(self):
+        # カラム名と同名のキーを持ち、値は全てNoneのdict型エンティティを生成
+        entity = {
+            'item_code': None,
+            'item_name': None,
+            'item_url': None,
+            'item_price_max': None,
+            'item_price_min': None,
+            'affiliate_url': None,
+            'image_flag': None,
+            'medium_image_url': None,
+            'tax_flag': None,
+            'postage_flag': None,
+            'credit_card_flag': None,
+            'start_time': None,
+            'end_time': None,
+            'review_count': None,
+            'review_average': None,
+            'point_rate': None,
+            'point_rate_start_time': None,
+            'point_rate_end_time': None,
+            'shop_name': None,
+            'shop_code': None,
+            'shop_url': None,
+            'shop_affiliate_url': None
+        }
+        return entity
 
-def file_exist_check():
-    # CSVファイル名
-    csv_file = 'rakuten_item.csv'
+    def insert_item(self, item_entity):
+        with self.connection.cursor() as cursor:
+            sql = '''
+                INSERT INTO items
+                (item_code, item_name, item_url, item_price_max, item_price_min, affiliate_url, image_flag,
+                medium_image_url, tax_flag, postage_flag, credit_card_flag, start_time, end_time,
+                review_count, review_average, point_rate, point_rate_start_time, point_rate_end_time,
+                shop_name, shop_code, shop_url, shop_affiliate_url)
+                VALUES
+                (%(item_code)s, %(item_name)s, %(item_url)s, %(item_price_max)s, %(item_price_min)s, %(affiliate_url)s, %(image_flag)s,
+                %(medium_image_url)s, %(tax_flag)s, %(postage_flag)s, %(credit_card_flag)s, %(start_time)s, %(end_time)s,
+                %(review_count)s, %(review_average)s, %(point_rate)s, %(point_rate_start_time)s, %(point_rate_end_time)s,
+                %(shop_name)s, %(shop_code)s, %(shop_url)s, %(shop_affiliate_url)s) 
+                ON DUPLICATE KEY UPDATE
+                item_name = VALUES(item_name),
+                item_url = VALUES(item_url),
+                item_price_max = VALUES(item_price_max),
+                item_price_min = VALUES(item_price_min),
+                affiliate_url = VALUES(affiliate_url),
+                image_flag = VALUES(image_flag),
+                medium_image_url = VALUES(medium_image_url),
+                tax_flag = VALUES(tax_flag),
+                postage_flag = VALUES(postage_flag),
+                credit_card_flag = VALUES(credit_card_flag),
+                start_time = VALUES(start_time),
+                end_time = VALUES(end_time),
+                review_count = VALUES(review_count),
+                review_average = VALUES(review_average),
+                point_rate = VALUES(point_rate),
+                point_rate_start_time = VALUES(point_rate_start_time),
+                point_rate_end_time = VALUES(point_rate_end_time),
+                shop_name = VALUES(shop_name),
+                shop_code = VALUES(shop_code),
+                shop_url = VALUES(shop_url),
+                shop_affiliate_url = VALUES(shop_affiliate_url)
+            '''
+            cursor.execute(sql, item_entity)
+            self.connection.commit()
 
-    # CSVファイルが存在するか確認
-    file_exists = os.path.exists(csv_file)
-
-    if file_exists:
-        return
-
-    # ヘッダー行
-    header = [
-        '商品名',
-        '商品コード',
-        '商品URL',
-        '商品価格最大',
-        '商品価格最低',
-        '商品画像フラグ',
-        '商品画像URL',
-        '税込みフラグ',
-        '送料フラグ',
-        'クレカ利用可フラグ',
-        'タイムセール開始時刻',
-        'タイムセール終了時刻',
-        'レビュー件数',
-        'レビュー平均',
-        '商品別ポイント倍率',
-        '商品別ポイント倍率変更開始日時',
-        '商品別ポイント倍率変更終了日時',
-        '店舗名',
-        '店舗コード',
-        '店舗URL',
-        'アフィリエイト店舗URL'
-    ]
-
-    with open(csv_file, 'a', newline='', encoding='shift-jis') as file:
-        writer = csv.writer(file)
-
-        # ファイルが存在しない場合、ヘッダー行を書き込む
-        writer.writerow(header)
-
-file_exist_check()
-main()
+if __name__ == '__main__':
+    m = Main()
+    m.main()
