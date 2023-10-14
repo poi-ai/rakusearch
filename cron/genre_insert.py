@@ -14,6 +14,7 @@ class GenreInsert:
             'user': config.USER_NAME,
             'password': config.PASSWORD,
             'db': config.DB_NAME,
+            'port': config.PORT
         }
         self.connection = None
 
@@ -38,6 +39,10 @@ class GenreInsert:
         genres_dict['genre_name'] = genre_name
         genres_dict['hierarchy'] = hierarchy
         genres_dict[f'genre{hierarchy}_id'] = genre_id
+
+        # 現階層より下の階層はリセット
+        for index in range(hierarchy + 1, 6):
+            genres_dict[f'genre{index}_id'] = None
 
         # レコード追加
         self.insert_genres(genres_dict)
@@ -77,7 +82,8 @@ class GenreInsert:
                 sql = f"INSERT INTO genres ({columns}) VALUES ({placeholders})"
                 cursor.execute(sql, list(genres_dict.values()))
                 self.connection.commit()
-        except:
+        except Exception as e:
+            print(e)
             return
 
     def genres_entity(self):

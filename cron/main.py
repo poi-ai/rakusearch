@@ -2,6 +2,7 @@ import config
 import genre
 import json
 import pymysql
+import re
 import requests
 import time
 
@@ -9,7 +10,7 @@ class Main():
     def __init__(self):
         self.itemdb = ItemsTableHandler()
 
-    def main():
+    def main(self):
         # ジャンルIDごとに更新商品を取得
         for genre_dict in genre.genre_list:
             # ジャンルID取得
@@ -25,8 +26,39 @@ class Main():
             # 1商品ごとに処理
             for item in item_list:
                 item = item['Item']
+                item_entity = self.itemdb.entity()
 
-                # TODO
+                # カラム処理
+                for key, value in item.items():
+                    # レスポンスカラムのキャメルケースをDBカラムのスネークケースに書き直す
+                    snake_key = self.camel_to_snake(key)
+
+                    # 例外ケースのみ個別対応
+                    if snake_key == 'item_price_max1':
+                        item_entity['item_price_max'] = value
+                        continue
+
+                    if snake_key == 'item_price_min1':
+                        item_entity['item_price_min'] = value
+                        continue
+
+                    if snake_key == 'image_flag' and value == 1:
+                        item_entity['medium_image_url'] = item['mediumImageUrls'][0]['imageUrl'].replace('?_ex=128x128', '')
+
+                    # エンティティにキー(=テーブルにカラム)があり、NULLでなければ追加
+                    if snake_key in item_entity and value != '':
+                        item_entity[snake_key] = value
+                        
+                #print(item_entity)
+                #exit()
+
+                # レコード追加
+                self.itemdb.insert_item(item_entity)
+
+    def camel_to_snake(self, name):
+        '''キャメルケースをスネークケースに'''
+        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 class ItemsTableHandler:
     def __init__(self):
@@ -35,10 +67,8 @@ class ItemsTableHandler:
             'user': config.USER_NAME,
             'password': config.PASSWORD,
             'db': config.DB_NAME,
+            'port': config.PORT
         }
-        self.connection = None
-
-    def connect(self):
         self.connection = pymysql.connect(**self.db_config)
 
     def entity(self):
