@@ -1,29 +1,38 @@
-import React from 'react';
-import ProductCard from './components/ProductCard';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import ItemCard from './components/ItemCard';
 
-function App() {
-  return (
-    <div className="container">
-      <h1>ECサイトの検索結果</h1>
-      <div className="row">
-        <div className="col-md-4">
-          <ProductCard
-            title="商品1"
-            price={1000}
-            description="この商品は素晴らしい商品です。"
-          />
-        </div>
-        <div className="col-md-4">
-          <ProductCard
-            title="商品2"
-            price={1500}
-            description="別の素晴らしい商品です。"
-          />
-        </div>
-        {/* 他の商品カードも同様に追加 */}
+const App = () => {
+    const [value, setValue] = useState([]);
+
+    // laravelの商品情報取得API
+    const url = 'http://localhost:8000/api/items';
+
+    useEffect(()=>{
+        (async ()=>{
+            try {
+                axios.get(url).then(res => {
+                    setValue(res.data)
+                })
+            } catch (e) {
+                return e;
+            }
+        })();
+    },[]);
+
+    return (
+        <div>
+        {value.length > 0 && (
+          <div className="container">
+            <div className="row">
+                {value.map((item) => (
+                    <ItemCard item = {item} />
+                ))}
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  );
+    );
 }
 
 export default App;

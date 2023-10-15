@@ -48,7 +48,7 @@ class Main():
                     # エンティティにキー(=テーブルにカラム)があり、NULLでなければ追加
                     if snake_key in item_entity and value != '':
                         item_entity[snake_key] = value
-                        
+
                 #print(item_entity)
                 #exit()
 
