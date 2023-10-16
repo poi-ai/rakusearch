@@ -45,10 +45,10 @@ function ItemCard({ item }) {
 
     // クレカ判定
     const creditFlag = (creditFlag) => {
-        if (creditFlag === 1) {
-            return <small class="credit-ok">クレジット払い可</small>;
+        if (creditFlag === 0) {
+            return <span class="credit-ok">クレジット決済OK</span>;
         } else {
-            return <span class="credit-ng">クレジット払い不可</span>;
+            return <span class="credit-ng">クレジット決済NG</span>;
         }
     }
 
@@ -85,17 +85,17 @@ function ItemCard({ item }) {
     }
 
     return (
-        <div className="col-md-4">
+        <div className="col-md-4 my-3">
             <div className="card">
                 <img src={imageFlag(item.image_flag, item.medium_image_url)} className="card-img-top" alt={item.item_name} onError={handleImageError} />
                 <div className="card-body">
                     <h5 className="card-title"><a href={item.item_url} target="blank_">{ItemName(item.item_name)}</a></h5>
-                    <p className="--bs-danger card-text">{priceRange(item.item_price_min, item.item_price_max)} {postageFlag(item.postage_flag)}</p>
+                    <p className="--bs-danger card-text"><span className='item-price'>{priceRange(item.item_price_min, item.item_price_max)}</span><span>{postageFlag(item.postage_flag)}</span></p>
                     <p className="card-text">ポイント{pointRate(item.point_rate)}倍 {pointRateTime(item.point_rate_start_time, item.point_rate_end_time)} </p>
                     <div>{creditFlag(item.credit_card_flag)}</div>
                     <div>{review(item.review_count, item.review_average)}</div>
                     <div><a href={item.shop_url} target="blank_">{item.shop_name}</a></div>
-                    <div>データ取得時刻: {item.updated_at}</div>
+                    <div>最終更新: {item.updated_at}</div>
                 </div>
             </div>
         </div>
