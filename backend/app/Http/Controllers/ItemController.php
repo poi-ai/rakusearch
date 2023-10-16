@@ -9,8 +9,8 @@ class ItemController extends Controller
 {
     public function index()
     {
-        // Itemモデルを使用して上位20レコードを取得
-        $items = DB::select('SELECT * FROM items');
+        // Itemモデルを使用して上位50レコードを取得
+        $items = DB::select('SELECT * FROM items limit 50');
 
         // JSONレスポンスを返す
         return response()->json($items);

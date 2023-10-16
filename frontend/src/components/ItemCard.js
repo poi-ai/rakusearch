@@ -13,7 +13,7 @@ function ItemCard({ item }) {
 
     // 商品画像が存在しない場合はNo Imageを表示する
     const imageFlag = (imageFlag, imageUrl) => {
-        if (imageFlag == 1) {
+        if (imageFlag === '1') {
             return imageUrl;
         } else {
             return 'https://biccamera.rakuten.co.jp/c/src/img/common/img-noimage.png';
@@ -27,7 +27,7 @@ function ItemCard({ item }) {
 
     // 個数の違いなどで商品価格が複数存在する場合は~表示を行う
     const priceRange = (minPrice, maxPrice) => {
-        if (minPrice = maxPrice) {
+        if (minPrice === maxPrice) {
             return addCommasToNumber(minPrice) + '円';
         } else {
             return addCommasToNumber(minPrice) + '円 ～ ' + addCommasToNumber(maxPrice) + '円';
@@ -36,7 +36,7 @@ function ItemCard({ item }) {
 
     // 送料判定
     const postageFlag = (postageFlag) =>{
-        if (postageFlag == 1) {
+        if (postageFlag === '1') {
             return '+ 送料';
         } else {
             return '送料無料';
@@ -45,19 +45,37 @@ function ItemCard({ item }) {
 
     // クレカ判定
     const creditFlag = (creditFlag) => {
-        if (creditFlag == 1) {
-            return <small class="d-inline-flex mb-3 px-2 py-1 fw-semibold text-success-emphasis bg-success-subtle border border-success-subtle rounded-2">Added in v5.2.0</small>;
+        if (creditFlag === 1) {
+            return <small class="credit-ok">クレジット払い可</small>;
         } else {
-            return <span class="label label-danger">クレジット払い不可</span>;
+            return <span class="credit-ng">クレジット払い不可</span>;
         }
     }
 
-    // ポイント倍率 .0の表示をなくす
+    // ポイント倍率
     const pointRate = (pointRate) => {
         if (Number.isInteger(parseFloat(pointRate))) {
-          return parseInt(pointRate);
+            return parseInt(pointRate);
         } else {
-          return pointRate;
+            return pointRate;
+        }
+    }
+
+    // ポイント倍率変更期間
+    const pointRateTime = (startTime, endTime) => {
+        if (startTime === null) {
+            return '';
+        }
+        return startTime + '~' + endTime;
+    }
+
+    // レビュー表示
+    const review = (count, rate) => {
+        // TODO 星をつける
+        if (count === 0) {
+            return '-.-- (0件)';
+        } else {
+            return rate + ' (' + count + '件)';
         }
     }
 
@@ -69,12 +87,15 @@ function ItemCard({ item }) {
     return (
         <div className="col-md-4">
             <div className="card">
-                <img src={imageFlag(item.image_flag, item.medium_image_url)} className="card-img-top" onError={handleImageError} />
+                <img src={imageFlag(item.image_flag, item.medium_image_url)} className="card-img-top" alt={item.item_name} onError={handleImageError} />
                 <div className="card-body">
                     <h5 className="card-title"><a href={item.item_url} target="blank_">{ItemName(item.item_name)}</a></h5>
                     <p className="--bs-danger card-text">{priceRange(item.item_price_min, item.item_price_max)} {postageFlag(item.postage_flag)}</p>
-                    <p className="card-text">ポイント{pointRate(item.point_rate)}倍</p>
+                    <p className="card-text">ポイント{pointRate(item.point_rate)}倍 {pointRateTime(item.point_rate_start_time, item.point_rate_end_time)} </p>
                     <div>{creditFlag(item.credit_card_flag)}</div>
+                    <div>{review(item.review_count, item.review_average)}</div>
+                    <div><a href={item.shop_url} target="blank_">{item.shop_name}</a></div>
+                    <div>データ取得時刻: {item.updated_at}</div>
                 </div>
             </div>
         </div>
