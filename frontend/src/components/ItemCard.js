@@ -3,7 +3,7 @@ import React from 'react';
 function ItemCard({ item }) {
 
     // 商品名が30文字以上の場合は...で置き換える
-    const ItemName = (name) => {
+    const moldItemName = (name) => {
         if (name.length > 30) {
             return name.slice(0, 30) + '...';
         } else {
@@ -12,7 +12,7 @@ function ItemCard({ item }) {
     }
 
     // 商品画像が存在しない場合はNo Imageを表示する
-    const imageFlag = (imageFlag, imageUrl) => {
+    const imageCheck = (imageFlag, imageUrl) => {
         if (imageFlag === '1') {
             return imageUrl;
         } else {
@@ -26,7 +26,7 @@ function ItemCard({ item }) {
     };
 
     // 個数の違いなどで商品価格が複数存在する場合は~表示を行う
-    const priceRange = (minPrice, maxPrice) => {
+    const priceRangeCheck = (minPrice, maxPrice) => {
         if (minPrice === maxPrice) {
             return addCommasToNumber(minPrice) + '円';
         } else {
@@ -35,7 +35,7 @@ function ItemCard({ item }) {
     }
 
     // 送料判定
-    const postageFlag = (postageFlag) =>{
+    const postageCheck = (postageFlag) =>{
         if (postageFlag === '1') {
             return '+ 送料';
         } else {
@@ -44,8 +44,8 @@ function ItemCard({ item }) {
     }
 
     // クレカ判定
-    const creditFlag = (creditFlag) => {
-        if (creditFlag === 0) {
+    const creditCheck = (creditFlag) => {
+        if (creditFlag === 1) {
             return <span class="credit-ok">クレジット決済OK</span>;
         } else {
             return <span class="credit-ng">クレジット決済NG</span>;
@@ -71,12 +71,22 @@ function ItemCard({ item }) {
 
     // レビュー表示
     const review = (count, rate) => {
-        // TODO 星をつける
-        if (count === 0) {
-            return '-.-- (0件)';
-        } else {
-            return rate + ' (' + count + '件)';
+        let html = [];
+        for (let i = 1; i <= 5; i++) {
+            if (rate >= i) {
+                html.push(<span key={i} className="review-star">★</span>);
+            } else {
+                html.push(<span key={i}>☆</span>);
+            }
         }
+
+        if (count === 0) {
+            html.push('-.-- (0件)');
+        } else {
+            html.push(rate + ' (' + count + '件)');
+        }
+
+        return <>{html}</>; // または <div>{html}</div> など、必要に応じたラップ要素を選択
     }
 
     // 3桁ごとにカンマを挿入
@@ -87,15 +97,24 @@ function ItemCard({ item }) {
     return (
         <div className="col-md-4 my-3">
             <div className="card">
-                <img src={imageFlag(item.image_flag, item.medium_image_url)} className="card-img-top" alt={item.item_name} onError={handleImageError} />
+                <div className="image-frame">
+                    <img src={imageCheck(item.image_flag, item.medium_image_url)} className="card-img-top" alt={item.item_name} onError={handleImageError} />
+                </div>
                 <div className="card-body">
-                    <h5 className="card-title"><a href={item.item_url} target="blank_">{ItemName(item.item_name)}</a></h5>
-                    <p className="--bs-danger card-text"><span className='item-price'>{priceRange(item.item_price_min, item.item_price_max)}</span><span>{postageFlag(item.postage_flag)}</span></p>
-                    <p className="card-text">ポイント{pointRate(item.point_rate)}倍 {pointRateTime(item.point_rate_start_time, item.point_rate_end_time)} </p>
-                    <div>{creditFlag(item.credit_card_flag)}</div>
+                    <h5 className="card-title"><a href={item.item_url} target="blank_">{moldItemName(item.item_name)}</a></h5>
+                    <div className="--bs-danger card-text">
+                        <span className='item-price'>{priceRangeCheck(item.item_price_min, item.item_price_max)}</span>
+                        <span>{postageCheck(item.postage_flag)}</span>
+                        {creditCheck(item.credit_card_flag)}
+                    </div>
+                    <div>
+                        ポイント{pointRate(item.point_rate)}倍 
+                        {pointRateTime(item.point_rate_start_time, item.point_rate_end_time)}
+                    </div>
+                    <div></div>
                     <div>{review(item.review_count, item.review_average)}</div>
                     <div><a href={item.shop_url} target="blank_">{item.shop_name}</a></div>
-                    <div>最終更新: {item.updated_at}</div>
+                    <div className="latest-update">最終更新: {item.updated_at}</div>
                 </div>
             </div>
         </div>

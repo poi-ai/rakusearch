@@ -1,22 +1,34 @@
 
 /* カードコンポーネントのCSS */
+.image-frame {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+}
 .item-price {
     color: red;
     font-size: 25px;
     font-weight: bold;
     margin-right: 10px;
 }
+.review-star {
+    color: rgb(240, 240, 98);
+}
 .credit-ok {
     background-color: rgb(95, 95, 247);
-    font-size: 12px;
+    font-size: 11px;
+    border-radius: 10px;
+    color: white;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+.credit-ng {
+    background-color: rgb(247, 95, 95);
+    font-size: 11px;
     border-radius: 10px;
     color: white;
     padding: 5px;
 }
-.credit-ng {
-    background-color: rgb(247, 95, 95);
+.latest-update {
     font-size: 12px;
-    border-radius: 10px;
-    color: white;
-    padding: 5px;
 }
