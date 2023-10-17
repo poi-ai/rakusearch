@@ -54,10 +54,12 @@ function ItemCard({ item }) {
 
     // ポイント倍率
     const pointRate = (pointRate) => {
-        if (Number.isInteger(parseFloat(pointRate))) {
-            return parseInt(pointRate);
+        if (pointRate === '1.0'){
+            return <div className='point-one-ratio'>ポイント1倍</div>;
+        } else if (Number.isInteger(parseFloat(pointRate))) {
+            return <div className='point-multi-ratio'>ポイントo{parseInt(pointRate)}倍</div>;
         } else {
-            return pointRate;
+            return <div className='point-multi-ratio'>ポイントo{pointRate}倍</div>;
         }
     }
 
@@ -108,7 +110,7 @@ function ItemCard({ item }) {
                         {creditCheck(item.credit_card_flag)}
                     </div>
                     <div>
-                        ポイント{pointRate(item.point_rate)}倍 
+                        {pointRate(item.point_rate)}
                         {pointRateTime(item.point_rate_start_time, item.point_rate_end_time)}
                     </div>
                     <div></div>

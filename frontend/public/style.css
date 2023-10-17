@@ -1,5 +1,12 @@
 
 /* カードコンポーネントのCSS */
+.point-one-ratio {
+    color: red;
+}
+.point-multi-ratio {
+    color: red;
+    font-weight: bold;
+}
 .image-frame {
     width: 300px;
     height: 300px;
