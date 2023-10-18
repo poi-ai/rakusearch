@@ -1,16 +1,15 @@
 
 /* カードコンポーネントのCSS */
-.point-one-ratio {
-    color: red;
-}
-.point-multi-ratio {
-    color: red;
-    font-weight: bold;
+.card {
+    width: 15rem;
 }
 .image-frame {
-    width: 300px;
-    height: 300px;
+    width: 14.9rem;
+    height: 14.9rem;
     overflow: hidden;
+}
+.card-title {
+    font-size: 16px;
 }
 .item-price {
     color: red;
@@ -35,6 +34,9 @@
     border-radius: 10px;
     color: white;
     padding: 5px;
+}
+.shop-name {
+    font-size: 14px;
 }
 .latest-update {
     font-size: 12px;

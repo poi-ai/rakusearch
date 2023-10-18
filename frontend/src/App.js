@@ -22,16 +22,16 @@ const App = () => {
 
     return (
         <div>
-        {value.length > 0 && (
-          <div className="container">
-            <div className="row">
-                {value.map((item) => (
-                    <ItemCard item = {item} />
-                ))}
+            {value.length > 0 && (
+            <div className="container">
+                <div className="row">
+                    {value.map((item) => (
+                        <ItemCard item = {item} />
+                    ))}
+                </div>
             </div>
-          </div>
-        )}
-      </div>
+            )}
+        </div>
     );
 }
 
