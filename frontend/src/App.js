@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ItemCard from './components/ItemCard';
+import Header from './components/Header';
 
 const App = () => {
     const [value, setValue] = useState([]);
@@ -22,6 +23,7 @@ const App = () => {
 
     return (
         <div>
+            <Header />
             {value.length > 0 && (
             <div className="container">
                 <div className="row">
