@@ -60,26 +60,52 @@ const App = () => {
                                 ))}
                             </div>
                             <div>
-                                <button onClick={() => handlePageChange(-1)} disabled={currentPage - 1 <= 0}>
-                                    戻る
-                                </button>
-                                <button onClick={() => handlePageChange(-2)} disabled={currentPage - 2 <= 0}>
-                                    {currentPage - 2}
-                                </button>
-                                <button onClick={() => handlePageChange(-1)} disabled={currentPage - 1 <= 0}>
-                                    {currentPage - 1}
-                                </button>
-                                <span>{currentPage}</span>
-                                <button onClick={() => handlePageChange(1)} disabled={currentPage + 1 > totalPages}>
-                                    {currentPage + 1}
-                                </button>
-                                <button onClick={() => handlePageChange(2)} disabled={currentPage + 2 > totalPages}>
-                                    {currentPage + 2}
-                                </button>
-                                <button onClick={() => handlePageChange(1)} disabled={currentPage + 1 > totalPages}>
-                                    次へ
-                                </button>
-                                <span>全{totalPages}ページ</span>
+                                <ul class="pagination">
+                                    <li class={`page-item ${currentPage - 1 <= 0 ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(-1 * currentPage + 1)}>
+                                            &laquo;
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage - 1 <= 0 ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(-1)}>
+                                            &lt;
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage - 2 <= 0 ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(-2)}>
+                                            {currentPage - 2}
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage - 1 <= 0 ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(-1)}>
+                                            {currentPage - 1}
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <span class="page-link">{currentPage}</span>
+                                    </li>
+                                    <li class={`page-item ${currentPage + 1 > totalPages ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(1)}>
+                                            {currentPage + 1}
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage + 2 > totalPages ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(2)}>
+                                            {currentPage + 2}
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage + 1 > totalPages ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(1)}>
+                                            &gt;
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage + 1 > totalPages ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(totalPages - currentPage)}>
+                                            &raquo;
+                                        </a>
+                                    </li>
+                                    <span>全{totalPages}ページ</span>
+                                </ul>
                             </div>
                         </div>
                     )}
