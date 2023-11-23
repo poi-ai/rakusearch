@@ -73,25 +73,25 @@ const App = () => {
                                     </li>
                                     <li class={`page-item ${currentPage - 2 <= 0 ? 'disabled' : ''}`}>
                                         <a class="page-link" onClick={() => handlePageChange(-2)}>
-                                            {currentPage - 2}
+                                            {currentPage - 2 <= 0 ? '・' : currentPage - 2}
                                         </a>
                                     </li>
                                     <li class={`page-item ${currentPage - 1 <= 0 ? 'disabled' : ''}`}>
                                         <a class="page-link" onClick={() => handlePageChange(-1)}>
-                                            {currentPage - 1}
+                                            {currentPage - 1 <= 0 ? '・' : currentPage - 1}
                                         </a>
                                     </li>
-                                    <li class="page-item">
+                                    <li class="page-item active">
                                         <span class="page-link">{currentPage}</span>
                                     </li>
                                     <li class={`page-item ${currentPage + 1 > totalPages ? 'disabled' : ''}`}>
                                         <a class="page-link" onClick={() => handlePageChange(1)}>
-                                            {currentPage + 1}
+                                            {currentPage + 1 > totalPages ? '・' : currentPage + 1}
                                         </a>
                                     </li>
                                     <li class={`page-item ${currentPage + 2 > totalPages ? 'disabled' : ''}`}>
                                         <a class="page-link" onClick={() => handlePageChange(2)}>
-                                            {currentPage + 2}
+                                            {currentPage + 2 > totalPages ? '・' : currentPage + 2}
                                         </a>
                                     </li>
                                     <li class={`page-item ${currentPage + 1 > totalPages ? 'disabled' : ''}`}>
