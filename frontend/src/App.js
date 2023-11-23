@@ -54,9 +54,9 @@ const App = () => {
                     </select>
                     {items.length > 0 && (
                         <div>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                                 {items.map((item) => (
-                                    <ItemCard item={item} key={item.id} />
+                                    <ItemCard item={item} key={item.id} style={{ flex: '0 0 calc(33.33% - 10px)' }} />
                                 ))}
                             </div>
                             <div>
@@ -69,6 +69,21 @@ const App = () => {
                                     <li class={`page-item ${currentPage - 1 <= 0 ? 'disabled' : ''}`}>
                                         <a class="page-link" onClick={() => handlePageChange(-1)}>
                                             &lt;
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage - 5 <= 0 ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(-5)}>
+                                            {currentPage - 5 <= 0 ? '・' : currentPage - 5}
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage - 4 <= 0 ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(-4)}>
+                                            {currentPage - 4 <= 0 ? '・' : currentPage - 4}
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage - 3 <= 0 ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(-3)}>
+                                            {currentPage - 3 <= 0 ? '・' : currentPage - 3}
                                         </a>
                                     </li>
                                     <li class={`page-item ${currentPage - 2 <= 0 ? 'disabled' : ''}`}>
@@ -92,6 +107,21 @@ const App = () => {
                                     <li class={`page-item ${currentPage + 2 > totalPages ? 'disabled' : ''}`}>
                                         <a class="page-link" onClick={() => handlePageChange(2)}>
                                             {currentPage + 2 > totalPages ? '・' : currentPage + 2}
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage + 3 > totalPages ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(3)}>
+                                            {currentPage + 3 > totalPages ? '・' : currentPage + 3}
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage + 4 > totalPages ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(4)}>
+                                            {currentPage + 4 > totalPages ? '・' : currentPage + 4}
+                                        </a>
+                                    </li>
+                                    <li class={`page-item ${currentPage + 5 > totalPages ? 'disabled' : ''}`}>
+                                        <a class="page-link" onClick={() => handlePageChange(5)}>
+                                            {currentPage + 5 > totalPages ? '・' : currentPage + 5}
                                         </a>
                                     </li>
                                     <li class={`page-item ${currentPage + 1 > totalPages ? 'disabled' : ''}`}>

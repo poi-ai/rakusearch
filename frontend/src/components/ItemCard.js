@@ -2,22 +2,25 @@ import React from 'react';
 
 function ItemCard({ item }) {
 
-    // 商品名が40文字以上の場合は...で置き換える
+    // 半角を1文字、全角を2文字として70文字以上の場合はそれ以降を...で置き換える
     const moldItemName = (name) => {
         let length = 0;
+        let truncatedName = '';
 
         for (const char of name) {
             // 全角半角判定
             const isFullwidth = char.match(/[^\x01-\x7E]/) !== null;
-            length += isFullwidth ? 1 : 2; // 多分正しくない
+            length += isFullwidth ? 2 : 1;
 
-            // 80文字を超えたら、全角文字を優先して切り詰め
-            if (length > 80) {
-                name += '...';
+            // 70文字を超えたら、全角文字を優先して切り詰め
+            if (length > 70) {
+                truncatedName += '...';
                 break;
             }
+
+            truncatedName += char;
         }
-        return name;
+        return truncatedName;
     }
 
     // 商品画像が存在しない場合はNo Imageを表示する
@@ -102,6 +105,11 @@ function ItemCard({ item }) {
         return <>{html}</>; // または <div>{html}</div> など、必要に応じたラップ要素を選択
     }
 
+    //
+    const moldTimeFormat = (timeStr) => {
+        return timeStr.replace('T', ' ').replace('.000000Z', '');
+    }
+
     // 3桁ごとにカンマを挿入
     function addCommasToNumber(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -127,7 +135,7 @@ function ItemCard({ item }) {
                     <div></div>
                     <div>{review(item.review_count, item.review_average)}</div>
                     <div className="shop-name"><a href={item.shop_url} target="blank_">{item.shop_name}</a></div>
-                    <div className="latest-update">最終更新: {item.updated_at}</div>
+                    <div className="latest-update">最終更新: {moldTimeFormat(item.updated_at)}</div>
                 </div>
             </div>
         </div>
